@@ -76,7 +76,7 @@ public class DatabaseOperations {
     /**
      * Receives the ETA from a certain ID.
      * @param ID
-     * @return boolean
+     * @return ETA
      */
     public int receiveClientToServer(String ID) {
         int ETA = -1;
