@@ -7,12 +7,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseOperations {
+    private String ID;
+    private String location;
+    private String assignedPickupTime;
+
+    public DatabaseOperations(String ID){
+        this.ID = ID;
+        this.location = "";
+        this.assignedPickupTime = "";
+    }
+
+    public DatabaseOperations(String ID, String location, String assignedPickupTime){
+        this.ID = ID;
+        this.location = location;
+        this.assignedPickupTime = assignedPickupTime;
+    }
 
     /**
      * Creates a new ID/Parent and assigns "-" to location and assigned pick up time.
      * @param ID
      */
-    public void initializeID(String ID){
+    public boolean initializeID(){
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
@@ -30,8 +45,8 @@ public class DatabaseOperations {
                 parameterizedQuery = conn.prepareStatement(query);
                 parameterizedQuery.setString(1, ID);
 
-                @SuppressWarnings("unused")
                 int recordsAffected = parameterizedQuery.executeUpdate();
+                return recordsAffected > 0;
             } else {
                 //TODO: issue new ID and reinitialize
             }
@@ -39,6 +54,7 @@ public class DatabaseOperations {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     /**
@@ -48,7 +64,7 @@ public class DatabaseOperations {
      * @param assignedPickupTime
      * @return
      */
-    public boolean sendServerToClient(String ID, String location, String assignedPickupTime) {
+    public boolean sendServerToClient() {
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
@@ -78,7 +94,7 @@ public class DatabaseOperations {
      * @param ID
      * @return ETA
      */
-    public int receiveClientToServer(String ID) {
+    public int receiveClientToServer() {
         int ETA = -1;
 
         try (Connection conn = DriverManager.getConnection(
