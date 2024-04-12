@@ -1,4 +1,4 @@
-package com.dorbello.database_services;
+package com.dorbello.dorbellomain;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -27,7 +27,7 @@ public class DatabaseOperations {
      * Creates a new ID/Parent and assigns "-" to location and assigned pick up time.
      * @param ID
      */
-    public boolean initializeID(){
+    public synchronized boolean initializeID(){
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
@@ -64,7 +64,7 @@ public class DatabaseOperations {
      * @param assignedPickupTime
      * @return
      */
-    public boolean sendServerToClient() {
+    public synchronized boolean sendServerToClient() {
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
@@ -94,7 +94,7 @@ public class DatabaseOperations {
      * @param ID
      * @return ETA
      */
-    public int receiveClientToServer() {
+    public synchronized int receiveClientToServer() {
         int ETA = -1;
 
         try (Connection conn = DriverManager.getConnection(
