@@ -26,6 +26,13 @@ public class DataController {
     @GetMapping("/info/{id}")
     public EntityModel<DatabaseOperations> receive(@PathVariable("id") String id){
         DatabaseOperations operations = new DatabaseOperations(id);
+        int ETA = -1;
+        ETA = operations.receiveClientToServer();
+
+        while(ETA == -1){   //wait for ETA to be updated, this is necessary as database operations are not thread-safe.
+            //do nothing
+        }
+
         // Ensure that the DatabaseOperations constructor and any invoked methods handle all exceptions appropriately.
         return EntityModel.of(operations, linkTo(methodOn(DataController.class).receive(id)).withSelfRel());
     }

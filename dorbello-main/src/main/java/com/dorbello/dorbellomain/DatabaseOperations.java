@@ -10,17 +10,36 @@ public class DatabaseOperations {
     private String ID;
     private String location;
     private String assignedPickupTime;
+    private int ETA;
 
     public DatabaseOperations(String ID){
         this.ID = ID;
         this.location = "";
         this.assignedPickupTime = "";
+        this.ETA = 0;
     }
 
     public DatabaseOperations(String ID, String location, String assignedPickupTime){
         this.ID = ID;
         this.location = location;
         this.assignedPickupTime = assignedPickupTime;
+        this.ETA = 0;
+    }
+
+    public String getID() {
+        return ID;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public String getAssignedPickupTime() {
+        return assignedPickupTime;
+    }
+
+    public int getETA() {
+        return ETA;
     }
 
     /**
@@ -95,8 +114,6 @@ public class DatabaseOperations {
      * @return ETA
      */
     public synchronized int receiveClientToServer() {
-        int ETA = -1;
-
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
