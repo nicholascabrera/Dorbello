@@ -5,40 +5,48 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import org.springframework.web.bind.annotation.*;
 
+import com.dorbello.exceptions.*;
+
 @RestController
 public class DataController {
 
     @PostMapping("/info")
     public EntityModel<DatabaseOperations> initialize(@RequestBody String id){
         DatabaseOperations operations = new DatabaseOperations(id);
-        boolean sent = operations.initializeID();
-
-        while (!sent){}     //wait for ETA to be updated, this is necessary as database operations are not thread-safe.
+        boolean successful = operations.initializeID();
         
-        return EntityModel.of(operations, linkTo(methodOn(DataController.class).initialize(id)).withSelfRel());
+        if (successful){
+            return EntityModel.of(operations, linkTo(methodOn(DataController.class).initialize(id)).withSelfRel());   
+        }
+
+        throw new ParentNotFoundException(id);
     }
 
     @PutMapping("/info/{id}")
     public EntityModel<DatabaseOperations> send(@RequestBody UpdateInfo info, @PathVariable String id){
         DatabaseOperations operations = new DatabaseOperations(id, info.getLocation(), info.getAssignedPickupTime());
         // true if it works, false if it didnt.
-        boolean sent = operations.sendServerToClient();
+        boolean successful = operations.sendServerToClient();
 
-        while (!sent){}     //wait for ETA to be updated, this is necessary as database operations are not thread-safe.
+        if (successful){
+            return EntityModel.of(operations, linkTo(methodOn(DataController.class).send(info, id)).withSelfRel());
+        }
 
-        return EntityModel.of(operations, linkTo(methodOn(DataController.class).send(info, id)).withSelfRel());
+        throw new ParentNotFoundException(id);
     }
 
     @GetMapping("/info/{id}")
     public EntityModel<DatabaseOperations> receive(@PathVariable("id") String id){
         DatabaseOperations operations = new DatabaseOperations(id);
-        int ETA = -1;
-        ETA = operations.receiveClientToServer();
 
-        while(ETA == -1){}   //wait for ETA to be updated, this is necessary as database operations are not thread-safe.
+        boolean successful = operations.receiveClientToServer();
 
         // Ensure that the DatabaseOperations constructor and any invoked methods handle all exceptions appropriately.
-        return EntityModel.of(operations, linkTo(methodOn(DataController.class).receive(id)).withSelfRel());
+        if (successful) {
+            return EntityModel.of(operations, linkTo(methodOn(DataController.class).receive(id)).withSelfRel());
+        }
+        
+        throw new ParentNotFoundException(id);
     }
 
     @GetMapping("/test_info/{id}")

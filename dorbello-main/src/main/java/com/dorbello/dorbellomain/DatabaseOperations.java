@@ -113,7 +113,7 @@ public class DatabaseOperations {
      * @param ID
      * @return ETA
      */
-    public synchronized int receiveClientToServer() {
+    public synchronized boolean receiveClientToServer() {
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
@@ -129,11 +129,12 @@ public class DatabaseOperations {
             
             if (rs.next()){
                 ETA = rs.getInt("ETA");
+                return true;
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return ETA;
+        return false;
     }
 }
