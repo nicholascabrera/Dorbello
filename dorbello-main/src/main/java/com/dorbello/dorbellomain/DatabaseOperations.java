@@ -83,7 +83,7 @@ public class DatabaseOperations {
      * @param assignedPickupTime
      * @return
      */
-    public synchronized boolean sendServerToClient() {
+    public synchronized boolean putServerToClient() {
         try (Connection conn = DriverManager.getConnection(
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
@@ -95,6 +95,38 @@ public class DatabaseOperations {
             parameterizedQuery.setString(1, location);
             parameterizedQuery.setString(2, assignedPickupTime);
             parameterizedQuery.setString(3, ID);
+
+            //execute the update and record the number of rows affected.
+            int recordsAffected = parameterizedQuery.executeUpdate();
+
+            //if 1 or more records was affected, we know the update was successful.
+            return recordsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Sends the location and assigned pick up time to the database at the correct ID.
+     * @param ID
+     * @param location
+     * @param assignedPickupTime
+     * @return
+     */
+    public synchronized boolean postServerToClient() {
+        try (Connection conn = DriverManager.getConnection(
+                        "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
+                        "userv", "dfCa#uFcF8W*o&jG")){
+            
+            String query = "INSERT INTO times_db.server_to_client VALUES (?, ?, ?)";
+            
+            //always use parameterized queries to mitigate the risk of SQL Injection.
+            PreparedStatement parameterizedQuery = conn.prepareStatement(query);
+            parameterizedQuery.setString(1, ID);
+            parameterizedQuery.setString(2, location);
+            parameterizedQuery.setString(3, assignedPickupTime);
 
             //execute the update and record the number of rows affected.
             int recordsAffected = parameterizedQuery.executeUpdate();

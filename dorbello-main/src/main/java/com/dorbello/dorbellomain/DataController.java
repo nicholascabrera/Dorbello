@@ -11,22 +11,35 @@ import com.dorbello.exceptions.*;
 public class DataController {
 
     @PostMapping("/info")
-    public EntityModel<DatabaseOperations> initialize(@RequestBody String id){
-        DatabaseOperations operations = new DatabaseOperations(id);
+    public EntityModel<DatabaseOperations> initialize(@RequestBody IDInfo idInfo){
+        DatabaseOperations operations = new DatabaseOperations(idInfo.getId());
         boolean successful = operations.initializeID();
         
         if (successful){
-            return EntityModel.of(operations, linkTo(methodOn(DataController.class).initialize(id)).withSelfRel());   
+            return EntityModel.of(operations, linkTo(methodOn(DataController.class).initialize(idInfo)).withSelfRel());   
         }
 
-        throw new ParentNotFoundException(id);
+        throw new InitializationUnsuccessfulException(idInfo.getId());
+    }
+
+    @PostMapping("/info/{id}")
+    public EntityModel<DatabaseOperations> initializeAndSend(@RequestBody UpdateInfo info, @PathVariable String id){
+        DatabaseOperations operations = new DatabaseOperations(id, info.getLocation(), info.getAssignedPickupTime());
+        // true if it works, false if it didnt.
+        boolean successful = operations.postServerToClient();
+
+        if (successful){
+            return EntityModel.of(operations, linkTo(methodOn(DataController.class).send(info, id)).withSelfRel());
+        }
+
+        throw new PostUnsuccessfulException(id);
     }
 
     @PutMapping("/info/{id}")
     public EntityModel<DatabaseOperations> send(@RequestBody UpdateInfo info, @PathVariable String id){
         DatabaseOperations operations = new DatabaseOperations(id, info.getLocation(), info.getAssignedPickupTime());
         // true if it works, false if it didnt.
-        boolean successful = operations.sendServerToClient();
+        boolean successful = operations.putServerToClient();
 
         if (successful){
             return EntityModel.of(operations, linkTo(methodOn(DataController.class).send(info, id)).withSelfRel());
@@ -52,6 +65,18 @@ public class DataController {
     @GetMapping("/test_info/{id}")
     public String test_receive(@PathVariable("id") String id){
         return "Testing: " + id;
+    }
+}
+
+class IDInfo {
+    private String id;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
 

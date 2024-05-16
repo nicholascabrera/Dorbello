@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ParentNotFoundAdvice {
+public class PostUnsuccessfulAdvice {
 
-  @ExceptionHandler(ParentNotFoundException.class)
-  @ResponseStatus(HttpStatus.NOT_FOUND)
-  public String parentNotFoundHandler(ParentNotFoundException ex) {
+  @ExceptionHandler(PostUnsuccessfulException.class)
+  @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+  public String postUnsuccessfulHandler(PostUnsuccessfulException ex) {
     return ex.getMessage();
   }
 }
