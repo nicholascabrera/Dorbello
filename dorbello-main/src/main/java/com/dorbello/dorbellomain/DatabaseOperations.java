@@ -182,11 +182,10 @@ public class DatabaseOperations {
                         "jdbc:mysql://localhost:3306/times_db?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC",
                         "userv", "dfCa#uFcF8W*o&jG")){
             
-            String query = "SELECT * FROM times_db.client_to_server WHERE ID = test";
+            String query = "SELECT * FROM times_db.client_to_server WHERE ID = \"test\"";
             
             //always use parameterized queries to mitigate the risk of SQL Injection.
             PreparedStatement parameterizedQuery = conn.prepareStatement(query);
-            parameterizedQuery.setString(1, ID);
 
             //execute the update and record the number of rows affected.
             ResultSet rs = parameterizedQuery.executeQuery();
