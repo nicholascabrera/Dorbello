@@ -16,7 +16,13 @@ public class DataController {
         boolean successful = operations.initializeID();
         
         if (successful){
-            return EntityModel.of(operations, linkTo(methodOn(DataController.class).initialize(idInfo)).withSelfRel());   
+            return EntityModel.of(
+                operations, 
+                linkTo(methodOn(DataController.class).initialize(idInfo)).withSelfRel(),
+                linkTo(methodOn(DataController.class).initializeAndSend(new UpdateInfo(null, null), idInfo.getId())).withRel("initialize all fields"),
+                linkTo(methodOn(DataController.class).send(new UpdateInfo(null, null), idInfo.getId())).withRel("update"),
+                linkTo(methodOn(DataController.class).receive(idInfo.getId())).withRel("get")
+            );
         }
 
         throw new InitializationUnsuccessfulException(idInfo.getId());
@@ -29,7 +35,13 @@ public class DataController {
         boolean successful = operations.postServerToClient();
 
         if (successful){
-            return EntityModel.of(operations, linkTo(methodOn(DataController.class).send(info, id)).withSelfRel());
+            return EntityModel.of(
+                operations, 
+                linkTo(methodOn(DataController.class).initializeAndSend(info, id)).withSelfRel(),
+                linkTo(methodOn(DataController.class).initialize(new IDInfo(id))).withRel("initialize"),
+                linkTo(methodOn(DataController.class).send(info, id)).withRel("update"),
+                linkTo(methodOn(DataController.class).receive(id)).withRel("get")
+            );
         }
 
         throw new PostUnsuccessfulException(id);
@@ -42,10 +54,16 @@ public class DataController {
         boolean successful = operations.putServerToClient();
 
         if (successful){
-            return EntityModel.of(operations, linkTo(methodOn(DataController.class).send(info, id)).withSelfRel());
+            return EntityModel.of(
+                operations, 
+                linkTo(methodOn(DataController.class).send(info, id)).withSelfRel(),
+                linkTo(methodOn(DataController.class).initialize(new IDInfo(id))).withRel("initialize"),
+                linkTo(methodOn(DataController.class).initializeAndSend(info, id)).withRel("initialize all fields"),
+                linkTo(methodOn(DataController.class).receive(id)).withRel("get")
+            );
         }
 
-        throw new ParentNotFoundException(id);
+        throw new PutUnsuccessfulException(id);
     }
 
     @GetMapping("/info/{id}")
@@ -56,7 +74,13 @@ public class DataController {
 
         // Ensure that the DatabaseOperations constructor and any invoked methods handle all exceptions appropriately.
         if (successful) {
-            return EntityModel.of(operations, linkTo(methodOn(DataController.class).receive(id)).withSelfRel());
+            return EntityModel.of(
+                operations, 
+                linkTo(methodOn(DataController.class).receive(id)).withSelfRel(),
+                linkTo(methodOn(DataController.class).initialize(new IDInfo(id))).withRel("initialize"),
+                linkTo(methodOn(DataController.class).initializeAndSend(new UpdateInfo(null, null), id)).withRel("initialize all fields"),
+                linkTo(methodOn(DataController.class).send(new UpdateInfo(null, null), id)).withRel("update")
+            );
         }
         
         throw new ParentNotFoundException(id);
@@ -71,6 +95,10 @@ public class DataController {
 class IDInfo {
     private String id;
 
+    public IDInfo(String id){
+        this.id = id;
+    }
+
     public String getId() {
         return id;
     }
@@ -83,6 +111,11 @@ class IDInfo {
 class UpdateInfo {
     private String location;
     private String assignedPickupTime;
+
+    public UpdateInfo(String location, String assignedPickupTime){
+        this.location = location;
+        this.assignedPickupTime = assignedPickupTime;
+    }
 
     public String getLocation() {
         return location;
