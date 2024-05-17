@@ -1,4 +1,4 @@
-package com.dorbello.dorbellomain;
+package com.dorbello.database_and_api;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

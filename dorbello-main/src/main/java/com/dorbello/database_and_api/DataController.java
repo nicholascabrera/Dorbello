@@ -1,4 +1,4 @@
-package com.dorbello.dorbellomain;
+package com.dorbello.database_and_api;
 
 import org.springframework.hateoas.EntityModel;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
