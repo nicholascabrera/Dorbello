@@ -86,9 +86,16 @@ public class DataController {
         throw new ParentNotFoundException(id);
     }
 
-    @GetMapping("/test_info/{id}")
-    public String test_receive(@PathVariable("id") String id){
-        return "Testing: " + id;
+    @GetMapping("/test_info/")
+    public String test_receive(){
+        DatabaseOperations operations = new DatabaseOperations();
+        boolean successful = operations.testDatabaseFunctionality();
+        
+        if (successful){
+            return "API: Functional\nDatabase: Functional";
+        }
+
+        return "API: Functional\nDatabase: Nonfunctional";
     }
 }
 
