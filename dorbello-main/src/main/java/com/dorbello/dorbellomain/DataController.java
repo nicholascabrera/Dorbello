@@ -24,7 +24,7 @@ public class DataController {
     public EntityModel<Page> POST(@RequestBody Page page){
         DatabaseOperations operations = new DatabaseOperations(page);
         boolean successful = operations.post();
-        
+
         if (successful){
             return EntityModel.of(
                 page,

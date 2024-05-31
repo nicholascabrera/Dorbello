@@ -102,7 +102,7 @@ public class DatabaseOperations {
     public String getLocation() {
         return location;
     }
-
+    
     public String getOrganization() {
         return organization;
     }
@@ -208,7 +208,7 @@ public class DatabaseOperations {
 
             //create a parent query.
             query = "SELECT * FROM times_db.t_parent WHERE PARENT_NAME = ?";
-                parameterizedQuery = conn.prepareStatement(query);
+            parameterizedQuery = conn.prepareStatement(query);
             parameterizedQuery.setString(1, this.parent);
 
             rs = parameterizedQuery.executeQuery();
