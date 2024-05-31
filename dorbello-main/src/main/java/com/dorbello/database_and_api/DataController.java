@@ -6,7 +6,10 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 import org.springframework.web.bind.annotation.*;
 
 import com.dorbello.exceptions.*;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@CrossOrigin
 @RestController
 public class DataController {
 
@@ -102,7 +105,8 @@ public class DataController {
 class IDInfo {
     private String id;
 
-    public IDInfo(String id){
+    @JsonCreator
+    public IDInfo(@JsonProperty("id") String id){
         this.id = id;
     }
 
@@ -119,7 +123,8 @@ class UpdateInfo {
     private String location;
     private String assignedPickupTime;
 
-    public UpdateInfo(String location, String assignedPickupTime){
+    @JsonCreator
+    public UpdateInfo(@JsonProperty("location") String location, @JsonProperty("assignedPickupTime") String assignedPickupTime){
         this.location = location;
         this.assignedPickupTime = assignedPickupTime;
     }
